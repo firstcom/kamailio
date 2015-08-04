@@ -28,6 +28,10 @@ ifeq ($(JAVA_HOME),)
    $(error Can't locate Java Development Kit. You have to specify environment JAVA_HOME to build app_java)
 endif
 
+ifeq ("$(wildcard $(JAVA_HOME)/include/jni.h)","")
+   $(error Invalid JAVA_HOME. jni.h not found)
+endif
+
 DEFS += -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/$(OS)
 
 # For some reason, Java on OSX doesnt use achitecture in its libjvm path
@@ -44,4 +48,3 @@ INCLUDES += -O0 -g
 DEFS+=-DKAMAILIO_MOD_INTERFACE
 
 include ../../Makefile.modules
-
