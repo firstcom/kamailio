@@ -125,8 +125,8 @@ static int mod_init(void)
 	options[nOptions].optionString = opts[nOptions];
     }
 
-    /* IMPORTANT: specify vm_args version # if you use JDK1.1.2 and beyond */
-    vm_args.version = JNI_VERSION_1_2;
+    /* IMPORTANT: specify vm_args version # if you use JDK1.8 and beyond */
+    vm_args.version = JNI_VERSION_1_6;
     vm_args.nOptions = nOptions;
     vm_args.ignoreUnrecognized = JNI_FALSE;
     vm_args.options = options;
