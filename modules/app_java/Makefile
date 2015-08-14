@@ -34,7 +34,7 @@ endif
 
 DEFS += -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/$(OS)
 
-# For some reason, Java on OSX doesnt use achitecture in its libjvm path
+# For some reason, Java on OSX doesnt use architecture in its libjvm path
 ifeq ($(OS),darwin)
 LIBS += -ljvm  -L$(JAVA_HOME)/jre/lib/server -rpath $(JAVA_HOME)/jre/lib/server
 else
