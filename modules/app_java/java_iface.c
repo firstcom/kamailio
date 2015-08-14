@@ -174,15 +174,6 @@ int java_exec(struct sip_msg *msgp, int is_static, int is_synchronized, char *me
 
     pkg_free(cs);
 
- //    // keep local reference to method
- //    invk_method_ref = (*env)->NewLocalRef(env, invk_method);
- //    if (!invk_method_ref || (*env)->ExceptionCheck(env))
- //    {
- //        handle_exception();
-	// (*jvm)->DetachCurrentThread(jvm);
- //        return -1;
- //    }
-
     retval = -1;
 
     if (is_synchronized)
