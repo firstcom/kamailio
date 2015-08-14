@@ -211,7 +211,7 @@ static int child_init(int rank)
         return -1;
     }
 
-    child_init_id = (*env)->GetMethodID(env, KamailioClass, "child_init", "(I)I");
+    child_init_id = (*env)->GetMethodID(env, KamailioClassRef, "child_init", "(I)I");
     if ((*env)->ExceptionCheck(env))
     {
 	handle_exception();
@@ -227,7 +227,6 @@ static int child_init(int rank)
 	return -1;
     }
 
-    (*env)->DeleteLocalRef(env, child_init_id);
     (*jvm)->DetachCurrentThread(jvm);
 
     msg = NULL;
