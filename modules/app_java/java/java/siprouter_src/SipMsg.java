@@ -2,7 +2,7 @@
 package org.siprouter;
 import java.lang.*;
 
-public abstract class SipMsg
+public class SipMsg
 {
 	/* Constructor. Do not remove !!! */
 	public SipMsg()
