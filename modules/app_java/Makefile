@@ -36,9 +36,9 @@ DEFS += -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/$(OS)
 
 # For some reason, Java on OSX doesnt use achitecture in its libjvm path
 ifeq ($(OS),darwin)
-LIBS += -L$(JAVA_HOME)/jre/lib/server
+LIBS += -ljvm  -L$(JAVA_HOME)/jre/lib/server -rpath $(JAVA_HOME)/jre/lib/server
 else
-LIBS += -L$(JAVA_HOME)/jre/lib/$(HOST_ARCH)/server
+LIBS += -ljvm  -L$(JAVA_HOME)/jre/lib/$(HOST_ARCH)/server 
 endif
 
 # disable optimisation for segfaults debugging
