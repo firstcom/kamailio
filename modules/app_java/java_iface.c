@@ -113,7 +113,7 @@ int java_exec(struct sip_msg *msgp, int is_static, int is_synchronized, char *me
     int locked;
     jfieldID fid;
     jclass cls;
-    jmethodID invk_method, invk_method_ref;
+    jmethodID invk_method;
     jvalue *jparam;
 
     if (signature == NULL || !strcmp(signature, ""))
@@ -159,21 +159,6 @@ int java_exec(struct sip_msg *msgp, int is_static, int is_synchronized, char *me
         return -1;
     }
 
-    cls = (*env)->GetObjectClass(env, KamailioClassInstance);
-    if ((*env)->ExceptionCheck(env))
-    {
-        handle_exception();
-	(*jvm)->DetachCurrentThread(jvm);
-        return -1;
-    }
-    fid = (*env)->GetFieldID(env, cls, "mop", "I");
-    if (!fid)
-    {
-        handle_exception();
-	(*jvm)->DetachCurrentThread(jvm);
-        return -1;
-    }
-
     msg = msgp;
 
     // find a method by signature
@@ -189,21 +174,20 @@ int java_exec(struct sip_msg *msgp, int is_static, int is_synchronized, char *me
 
     pkg_free(cs);
 
-    // keep local reference to method
-    invk_method_ref = (*env)->NewLocalRef(env, invk_method);
-    if (!invk_method_ref || (*env)->ExceptionCheck(env))
-    {
-        handle_exception();
-	(*env)->DeleteLocalRef(env, invk_method_ref);
-	(*jvm)->DetachCurrentThread(jvm);
-        return -1;
-    }
+ //    // keep local reference to method
+ //    invk_method_ref = (*env)->NewLocalRef(env, invk_method);
+ //    if (!invk_method_ref || (*env)->ExceptionCheck(env))
+ //    {
+ //        handle_exception();
+	// (*jvm)->DetachCurrentThread(jvm);
+ //        return -1;
+ //    }
 
     retval = -1;
 
     if (is_synchronized)
     {
-	if ((*env)->MonitorEnter(env, invk_method_ref) != JNI_OK)
+	if ((*env)->MonitorEnter(env, invk_method) != JNI_OK)
         {
 	    locked = 0;
 	    LM_ERR("%s: MonitorEnter() has failed! Can't synchronize!\n", APP_NAME);
@@ -217,39 +201,35 @@ int java_exec(struct sip_msg *msgp, int is_static, int is_synchronized, char *me
     if (param == NULL)
     {
 	retval = is_static ?
-		    (int)(*env)->CallStaticIntMethod(env, KamailioClassRef, invk_method_ref) :
-		    (int)(*env)->CallIntMethod(env, KamailioClassInstanceRef, invk_method_ref);
+		    (int)(*env)->CallStaticIntMethod(env, KamailioClassRef, invk_method) :
+		    (int)(*env)->CallIntMethod(env, KamailioClassInstanceRef, invk_method);
     }
     else
     {
 	jparam = get_value_by_sig_type(signature, param);
 	if (jparam == NULL)
 	{
-	    (*env)->DeleteLocalRef(env, invk_method_ref);
-	    (*env)->DeleteLocalRef(env, invk_method);
     	    (*jvm)->DetachCurrentThread(jvm);
 	    return -1;
 	}
 
 	retval = is_static ?
-		    (int)(*env)->CallStaticIntMethod(env, KamailioClassRef, invk_method_ref, *jparam) :
-		    (int)(*env)->CallIntMethod(env, KamailioClassInstanceRef, invk_method_ref, *jparam);
+		    (int)(*env)->CallStaticIntMethod(env, KamailioClassRef, invk_method, *jparam) :
+		    (int)(*env)->CallIntMethod(env, KamailioClassInstanceRef, invk_method, *jparam);
     }
 
     if ((*env)->ExceptionCheck(env))
     {
         LM_ERR("%s: %s(): %s() has failed. See exception below.\n", APP_NAME,
-		(is_static ? 
-			(is_synchronized ? "java_s_staticmethod_exec" : "java_staticmethod_exec") :
-			(is_synchronized ? "java_s_method_exec" : "java_method_exec")
-		),
-		is_static ? "CallStaticIntMethod" : "CallIntMethod"
-	);
+    		(is_static ? 
+    			(is_synchronized ? "java_s_staticmethod_exec" : "java_staticmethod_exec") :
+    			(is_synchronized ? "java_s_method_exec" : "java_method_exec")
+    		),
+    		is_static ? "CallStaticIntMethod" : "CallIntMethod"
+	    );
 
         handle_exception();
 
-	(*env)->DeleteLocalRef(env, invk_method_ref);
-	(*env)->DeleteLocalRef(env, invk_method);
         (*jvm)->DetachCurrentThread(jvm);
 
         return -1;
@@ -257,14 +237,12 @@ int java_exec(struct sip_msg *msgp, int is_static, int is_synchronized, char *me
 
     if (is_synchronized && locked)
     {
-	if ((*env)->MonitorExit(env, invk_method_ref) != JNI_OK)
+	if ((*env)->MonitorExit(env, invk_method) != JNI_OK)
 	{
 	    LM_ERR("%s: MonitorExit() has failed! Can't synchronize!\n", APP_NAME);
 	}
     }
 
-    (*env)->DeleteLocalRef(env, invk_method_ref);
-    (*env)->DeleteLocalRef(env, invk_method);
     (*jvm)->DetachCurrentThread(jvm);
 
     return retval;
