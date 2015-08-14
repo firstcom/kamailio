@@ -27,6 +27,6 @@
 
 #include <jni.h>
 
-jobject *fill_sipmsg_object(JNIEnv *, struct sip_msg *);
+jobject fill_sipmsg_object(JNIEnv *, struct sip_msg *);
 
 #endif
