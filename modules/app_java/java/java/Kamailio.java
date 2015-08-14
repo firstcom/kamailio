@@ -9,7 +9,7 @@ public class Kamailio extends NativeMethods
 {
 	static
 	{
-	    System.load("/opt/kamailio/lib/kamailio/modules/app_java.so");
+	    System.load("/opt/kamailio-dev/lib64/kamailio/modules/app_java.so");
 	}
 
 	/* Constructor. Do not remove !!! */
