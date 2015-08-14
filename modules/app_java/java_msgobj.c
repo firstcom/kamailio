@@ -37,21 +37,21 @@
 #include "java_native_methods.h"
 #include "java_msgobj.h"
 
-jobject *fill_sipmsg_object(JNIEnv *env, struct sip_msg *msg)
+jobject fill_sipmsg_object(JNIEnv *env, struct sip_msg *msg)
 {
-    jobject *SipMsgInstance;
+    jobject SipMsgInstance;
     jclass SipMsgClass;
     jmethodID SipMsgClassID;
     jfieldID fid;
     jstring jStrParam;
 
-    SipMsgInstance = (jobject *)pkg_malloc(sizeof(jobject));
+    SipMsgInstance = pkg_malloc(sizeof(jobject));
     if (!SipMsgInstance)
     {
 	LM_ERR("%s: pkg_malloc() has failed. Not enough memory!\n", APP_NAME);
 	return NULL;
     }
-    memset(SipMsgInstance, 0, sizeof(jobject));
+    //memset(SipMsgInstance, 0, sizeof(jobject));
 
     SipMsgClass = (*env)->FindClass(env, "org/siprouter/SipMsg");
     if (!SipMsgClass || (*env)->ExceptionCheck(env))
@@ -69,7 +69,7 @@ jobject *fill_sipmsg_object(JNIEnv *env, struct sip_msg *msg)
     }
 
     // calling constructor
-    (*SipMsgInstance) = (*env)->NewObject(env, SipMsgClass, SipMsgClassID);
+    SipMsgInstance = (*env)->NewObject(env, SipMsgClass, SipMsgClassID);
     if ((*env)->ExceptionCheck(env))
     {
         handle_exception();
