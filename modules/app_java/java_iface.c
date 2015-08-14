@@ -178,7 +178,7 @@ int java_exec(struct sip_msg *msgp, int is_static, int is_synchronized, char *me
 
     if (is_synchronized)
     {
-	if ((*env)->MonitorEnter(env, invk_method) != JNI_OK)
+	if ((*env)->MonitorEnter(env, (jobject)invk_method) != JNI_OK)
         {
 	    locked = 0;
 	    LM_ERR("%s: MonitorEnter() has failed! Can't synchronize!\n", APP_NAME);
@@ -228,7 +228,7 @@ int java_exec(struct sip_msg *msgp, int is_static, int is_synchronized, char *me
 
     if (is_synchronized && locked)
     {
-	if ((*env)->MonitorExit(env, invk_method) != JNI_OK)
+	if ((*env)->MonitorExit(env, (jobject)invk_method) != JNI_OK)
 	{
 	    LM_ERR("%s: MonitorExit() has failed! Can't synchronize!\n", APP_NAME);
 	}
